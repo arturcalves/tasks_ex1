@@ -6,14 +6,16 @@
 <link rel="stylesheet" type="text/css" href="styles/02-tasks.css" media="screen" />
 <script type="text/javascript" src="/scripts/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="/scripts/jquery-tmpl.js"></script>
+<script type="text/javascript" src="/scripts/jquery-serialization.js"></script>
+<script type="text/javascript" src="/scripts/tasks-controller.js"></script>
 </head>
 <body>
 	<header>
 		<span>Lista de Tarefas</span>
 	</header>
-	<main>
+	<main id="taskPage">
 		<section id="taskCreation" class="not">
-			<form>
+			<form id="taskForm">
 				<div>
 					<label>Tarefa</label> 
 					<input type="text" required="required" name="task" class="large" placeholder="Estudar e programar" />
@@ -29,7 +31,7 @@
 					</select>
 				</div>
 				<nav>
-					<a href="#" id="saveTask">Salvar tarefa</a> <a href="#">Limpar tarefa</a>
+					<a href="#" id="saveTask">Salvar tarefa</a> <a href="#" id="clearTask">Limpar tarefa</a>
 				</nav>
 			</form>
 		</section>
@@ -97,48 +99,8 @@
 </body>
 <script>
 	$(document).ready(function() {
-	    $('[required="required"]').prev('label').append( '<span>*</span>').children( 'span').addClass('required');
-	    $('tbody tr:even').addClass('even');
-	    $('#btnAddTask').click(function(evt) {
-			evt.preventDefault();
-			$('#taskCreation').removeClass('not');
-		});
-		$('#tblTasks tbody').on('click', 'tr', function(evt) {
-		    $(evt.target).closest( 'td').siblings( ).andSelf( ).toggleClass( 'rowHighlight');
-		});
-		$('#tblTasks tbody').on('click', '.deleteRow',   function(evt) {
-	  		evt.preventDefault();
-	  		$(evt.target).parents('tr').remove();
-		});
-		$('#saveTask').click(function(evt) {
-			evt.preventDefault();
-			var task = $('form').toObject();
-			$('#taskRow').tmpl(task).appendTo($('#tblTasks tbody'));
-		});
+		tasksController.init($('#taskPage'));
 	});
-	
-	(function($) {
-	  $.fn.extend({
-	    toObject: function() {
-	      var result = {}
-	      $.each(this.serializeArray(), function(i, v) {
-	        result[v.name] = v.value;
-	      });
-	      return result;
-	      },
-	    fromObject: function(obj) {
-	      $.each(this.find(':input'), function(i,v) {
-	        var name = $(v).attr('name');
-	        if (obj[name]) {
-	          $(v).val(obj[name]);
-	        } else {
-	          $(v).val('');
-	        }
-	      });
-	    }
-	  });
-	})(jQuery);
-	
 </script>
 <script id="taskRow" type="text/x-jQuery-tmpl">
 <tr>
