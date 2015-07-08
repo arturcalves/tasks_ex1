@@ -9,6 +9,7 @@
 <script type="text/javascript" src="/scripts/jquery-serialization.js"></script>
 <script type="text/javascript" src="/scripts/tasks-controller.js"></script>
 <script type="text/javascript" src="/scripts/jquery.validate.js"></script>
+<script type="text/javascript" src="/scripts/tasks-webstorage.js"></script>
 </head>
 <body>
 	<header>
@@ -17,6 +18,7 @@
 	<main id="taskPage">
 		<section id="taskCreation" class="not">
 			<form id="taskForm">
+				<input type="hidden" name="id" />
 				<div>
 					<label>Tarefa</label> 
 					<input type="text" required="required" name="task" class="large" placeholder="Estudar e programar" maxlength="200" />
@@ -101,6 +103,7 @@
 <script>
 	$(document).ready(function() {
 		tasksController.init($('#taskPage'));
+		tasksController.loadTasks();
 	});
 </script>
 <script id="taskRow" type="text/x-jQuery-tmpl">
@@ -110,9 +113,9 @@
 	<td>${category}</td>
 	<td>
 		<nav>
-			<a href="#">Editar</a>
+			<a href="#" class="editRow" data-task-id="${id}">Editar</a>
 			<a href="#">Completar</a>
-			<a href="#" class="deleteRow">Deletar</a>
+			<a href="#" class="deleteRow" data-task-id="${id}">Deletar</a>
 		</nav>
 	</td>
 </tr>

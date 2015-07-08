@@ -1,4 +1,7 @@
 tasksController = function() {
+    function errorLogger(errorCode, errorMessage) {
+	    console.log(errorCode +':'+ errorMessage);
+    }
 	var taskPage;
 	var initialised = false;   
 	return {
@@ -15,18 +18,50 @@ tasksController = function() {
 				$(taskPage).find('#tblTasks tbody' ).on('click', 'tr',function(evt) {
 					$(evt.target ).closest('td').siblings( ).andSelf( ).toggleClass( 'rowHighlight');
 				});
-				$(taskPage ).find('#tblTasks tbody').on('click', '.deleteRow', function(evt) {
-					evt.preventDefault();
-					$(evt.target ).parents('tr').remove();
-				});
-				$(taskPage).find( '#saveTask' ).click(function(evt) {
-					evt.preventDefault();
-					var task = $('form').toObject();
-					if ($(taskPage).find('form').valid())
-					    $('#taskRow').tmpl( task).appendTo($(taskPage ).find( '#tblTasks tbody'));
-				});
+				$(taskPage).find('#tblTasks tbody').on('click', '.deleteRow', 
+                	function(evt) { 					
+                		console.log('teste');
+                		storageEngine.delete('task', $(evt.target).data().taskId, 
+                			function() {
+                				$(evt.target).parents('tr').remove(); 
+                			}, errorLogger);
+                	}
+                );
+                $(taskPage).find('#tblTasks tbody').on('click', '.editRow', 
+                	function(evt) { 
+                		$(taskPage).find('#taskCreation').removeClass('not');
+                		storageEngine.findById('task', $(evt.target).data().taskId, function(task) {
+                			$(taskPage).find('form').fromObject(task);
+                		}, errorLogger);
+                	}
+                );
+                $(taskPage).find('#saveTask').click(function(evt) {
+                	evt.preventDefault();
+                	if ($(taskPage).find('form').valid()) {
+                		var task = $(taskPage).find('form').toObject();		
+                		storageEngine.save('task', task, function() {
+                			$(taskPage).find('#tblTasks tbody').empty();
+                			tasksController.loadTasks();
+                			$(':input').val('');
+                			$(taskPage).find('#taskCreation').addClass('not');
+                		}, errorLogger);
+                	}
+                });
+				storageEngine.init(function() {
+                	storageEngine.initObjectStore('task', function() {}, 
+                	errorLogger) 
+                }, errorLogger);
 				initialised = true;
 			}
-    	}
+    	},
+    	loadTasks : function() {
+        	storageEngine.findAll('task', 
+        		function(tasks) {
+        			$.each(tasks, function(index, task) {
+        				$('#taskRow').tmpl(task ).appendTo( $(taskPage ).find( '#tblTasks tbody'));
+        			});
+        		}, 
+        		errorLogger);
+        }
 	}
 }();
