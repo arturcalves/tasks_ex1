@@ -5,6 +5,7 @@
 <title>Tarefas</title>
 <link rel="stylesheet" type="text/css" href="styles/02-tasks.css" media="screen" />
 <script type="text/javascript" src="/scripts/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/scripts/jquery-tmpl.js"></script>
 </head>
 <body>
 	<header>
@@ -28,7 +29,7 @@
 					</select>
 				</div>
 				<nav>
-					<a href="#">Salvar tarefa</a> <a href="#">Limpar tarefa</a>
+					<a href="#" id="saveTask">Salvar tarefa</a> <a href="#">Limpar tarefa</a>
 				</nav>
 			</form>
 		</section>
@@ -109,6 +110,48 @@
 	  		evt.preventDefault();
 	  		$(evt.target).parents('tr').remove();
 		});
+		$('#saveTask').click(function(evt) {
+			evt.preventDefault();
+			var task = $('form').toObject();
+			$('#taskRow').tmpl(task).appendTo($('#tblTasks tbody'));
+		});
 	});
+	
+	(function($) {
+	  $.fn.extend({
+	    toObject: function() {
+	      var result = {}
+	      $.each(this.serializeArray(), function(i, v) {
+	        result[v.name] = v.value;
+	      });
+	      return result;
+	      },
+	    fromObject: function(obj) {
+	      $.each(this.find(':input'), function(i,v) {
+	        var name = $(v).attr('name');
+	        if (obj[name]) {
+	          $(v).val(obj[name]);
+	        } else {
+	          $(v).val('');
+	        }
+	      });
+	    }
+	  });
+	})(jQuery);
+	
+</script>
+<script id="taskRow" type="text/x-jQuery-tmpl">
+<tr>
+	<td>${task}</td>
+	<td><time datetime="${requiredBy}"> ${requiredBy}</time></td>
+	<td>${category}</td>
+	<td>
+		<nav>
+			<a href="#">Editar</a>
+			<a href="#">Completar</a>
+			<a href="#" class="deleteRow">Deletar</a>
+		</nav>
+	</td>
+</tr>
 </script>
 </html>
