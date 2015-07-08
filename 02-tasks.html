@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <title>Tarefas</title>
 <link rel="stylesheet" type="text/css" href="styles/02-tasks.css" media="screen" />
-
+<script type="text/javascript" src="/scripts/jquery-2.1.4.min.js"></script>
 </head>
 <body>
 	<header>
 		<span>Lista de Tarefas</span>
 	</header>
 	<main>
-		<section>
+		<section id="taskCreation" class="not">
 			<form>
 				<div>
 					<label>Tarefa</label> 
@@ -65,10 +65,18 @@
 				</tbody>
 			</table>
 			<nav>
-				<a href="#">Adicionar tarefa</a>
+				<a href="#" id="btnAddTask">Adicionar tarefa</a>
 			</nav>
 		</section>
 	</main>
 	<footer>Você tem 3 tarefas</footer>
 </body>
+<script>
+    $('[required="required"]').prev('label').append( '<span>*</span>').children( 'span').addClass('required');
+    $('tbody tr:even').addClass('even');
+    $('#btnAddTask').click(function(evt) {
+		evt.preventDefault();
+		$('#taskCreation').removeClass('not');
+	});
+</script>
 </html>
